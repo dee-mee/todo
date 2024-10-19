@@ -105,6 +105,21 @@ button:hover {
     background-color: #c82333;
 }
 
+@media (max-width: 600px) {
+    .container {
+        width: 100%;
+        padding: 10px;
+    }
+
+    input[type="text"] {
+        width: 100%;
+    }
+
+    select, button {
+        width: 100%;
+        margin: 10px 0;
+    }
+}
     </style>
     <div class="container">
         <h1>To-Do List</h1>
@@ -138,7 +153,8 @@ function addTask() {
     const task = {
         id: Date.now(),
         text: taskText,
-        category: taskCategory
+        category: taskCategory,
+        completed: false
     };
 
     tasks.push(task);
@@ -148,6 +164,13 @@ function addTask() {
 
 function deleteTask(id) {
     tasks = tasks.filter(task => task.id !== id);
+    renderTasks();
+}
+
+function toggleComplete(id) {
+    tasks = tasks.map(task => 
+        task.id === id ? { ...task, completed: !task.completed } : task
+    );
     renderTasks();
 }
 
@@ -171,20 +194,28 @@ function renderTasks() {
             const taskItem = document.createElement('div');
             taskItem.className = 'task-item';
 
+            const taskCheckbox = document.createElement('input');
+            taskCheckbox.type = 'checkbox';
+            taskCheckbox.checked = task.completed;
+            taskCheckbox.onclick = () => toggleComplete(task.id);
+
             const taskText = document.createElement('p');
             taskText.innerText = task.text;
+            if (task.completed) {
+                taskText.style.textDecoration = 'line-through';
+            }
 
             const deleteButton = document.createElement('button');
             deleteButton.innerText = 'Delete';
             deleteButton.onclick = () => deleteTask(task.id);
 
+            taskItem.appendChild(taskCheckbox);
             taskItem.appendChild(taskText);
             taskItem.appendChild(deleteButton);
             taskList.appendChild(taskItem);
         });
     }
 }
-
     </script>
 </body>
 </html>
